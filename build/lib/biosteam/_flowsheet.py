@@ -18,7 +18,7 @@ def make_digraph(units, streams):
     # Set up unit nodes
     UD = {}  # Contains full description (ID and line) by ID
     for u in units:
-        if hasattr(u, 'link_streams'): u._link_streams()
+        if hasattr(u, 'link_streams'): u.link_streams()
         graphics = u._graphics
         if not graphics.in_system:
             continue  # Ignore Unit

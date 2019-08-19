@@ -65,10 +65,13 @@ class Fermentation(Unit):
               'Cycle time': 'hr',
               'Loading time': 'hr',
               'Total dead time': 'hr'}
-    
+    _N_ins = _N_outs = 2
     _N_heat_utilities = 0
     _has_power_utility = True
     line = 'Fermentation'    
+    
+    #: [bool] If True, number of reactors (N) is chosen as to minimize installation cost in every simulation. Otherwise, N remains constant.
+    autoselect_N = False
     
     #: Cleaning and unloading time (hr)
     tau_0 = 3
@@ -87,7 +90,6 @@ class Fermentation(Unit):
                          113.4, # Xm
                          0.45,  # Y_PS
                          0.18)  # a
-    
     
     def __init__(self, ID='', ins=None, outs=(), *, 
                  tau,  N, efficiency=0.9, iskinetic=False):
@@ -208,14 +210,15 @@ class Fermentation(Unit):
         vent.copyflow(effluent, ('CO2',), remove=True)
         vent.recieve_vent(effluent)
     
-    def number_of_reactors_at_minimum_cost(self):
+    @property
+    def N_at_minimum_capital_cost(self):
         cost_old = np.inf
         self._N, N = 2, self._N
-        self.simulate()
         cost_new = self.purchase_cost
+        self._summary()
         while cost_new < cost_old:
             self._N += 1
-            self.simulate()
+            self._summary()
             cost_old = cost_new
             cost_new = self.purchase_cost
         self._N, N = N, self._N
@@ -226,6 +229,10 @@ class Fermentation(Unit):
         tau = self._tau
         tau_0 = self.tau_0
         Design = self._Design
+        if self.autoselect_N:
+            self.autoselect_N = False
+            self._N = self.N_at_minimum_capital_cost
+            self.autoselect_N = True
         Design['Number of reactors'] = N = self._N
         Design.update(size_batch(v_0, tau, tau_0, N, self._V_wf))
         hx = self._cooler
@@ -237,12 +244,10 @@ class Fermentation(Unit):
         hu.duty *= N
         hu.cost *= N
         hu.flow *= N
+        
+    def _end_decorated_cost_(self):
+        N = self._Design['Number of reactors']
+        Cost = self._Cost
+        Cost['Coolers'] = self._cooler._Cost['Heat exchanger']
+        for i in Cost: Cost[i] *= N
     
-_cost = Fermentation._cost
-def _extended_cost(self):
-    _cost(self)
-    N = self._Design['Number of reactors']
-    Cost = self._Cost
-    Cost['Coolers'] = self._cooler._Cost['Heat exchanger']
-    for i in Cost: Cost[i] *= N
-Fermentation._cost = _extended_cost

@@ -100,7 +100,7 @@ class unit(type):
         if isabstract: return cls
         
         if not hasattr(cls, '_run'):
-            raise NotImplementedError("'Unit' subclass must have a '_run' method. Use the 'isabstract' key word argument to disregard this error.")
+            raise NotImplementedError("'Unit' subclass must have a '_run' method unless the 'isabstract' keyword argument is True")
         
         return cls
 
@@ -563,7 +563,7 @@ class Unit(metaclass=unit):
         
         return neighborhood
 
-    def diagram(self, radius=0, file=None, format='svg'):
+    def diagram(self, radius=0, file=None, format='png'):
         """Display a `Graphviz <https://pypi.org/project/graphviz/>`__ diagram of the unit and all neighboring units within given radius.
         
         **Parameters**

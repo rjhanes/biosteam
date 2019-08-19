@@ -238,17 +238,20 @@ def duty(units, N_ins, N_outs):
     if factor == 1:
         return lambda self: self._outs[0].H - self._ins[0].H
     else:
-        return lambda self: factor*(self._outs[0].H - self._ins[0].H)
+        def find_duty(self):
+            self._duty_kJ_mol_ = duty = self._outs[0].H - self._ins[0].H
+            return factor*duty
+        return find_duty
 
 @design.define
 def dry_flow_rate(units, N_ins, N_outs):
-    if not (N_ins == N_outs == 1):
-        raise ValueError(f"number of input and output streams must be 1 for selected basis")
+    if not (N_ins == 1):
+        raise ValueError(f"number of input streams must be 1 for selected basis")
     if units != 'kg/hr':
         raise ValueError(f"units must be in kg/hr for selected basis")
     def dry_flow(self):
         feed = self._ins[0]
-        return feed.massnet - feed.mass[feed.indices('7732-18-5', CAS=True)]
+        return feed.massnet - feed.mass[feed.index('7732-18-5')]
     return dry_flow
 
 del flow_rate, duty, dry_flow_rate

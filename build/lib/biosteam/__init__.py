@@ -10,7 +10,9 @@ __all__ = ['Species', 'WorkingSpecies', 'Stream', 'MixedStream',
             'find', 'Flowsheet', 'CE']
 
 from lazypkg import LazyPkg
-LazyPkg(__name__, ['units', 'evaluation', 'inspect', 'compounds', 'reaction', '_equilibrium'])
+LazyPkg(__name__, ['_equilibrium', '_utils', 'units',
+                   'evaluation', 'inspect', 'compounds',
+                   'reaction'])
 
 #: Chemical engineering plant cost index (defaults to 567.5 at 2017)
 CE = 567.5 
@@ -48,7 +50,7 @@ from ._heat_utility import HeatUtility
 from ._power_utility import PowerUtility
 from ._unit import Unit
 from ._system import System
-from ._tea import TEA
+from ._tea import CombinedTEA, TEA
 from ._flowsheet import Flowsheet, find
 
 
