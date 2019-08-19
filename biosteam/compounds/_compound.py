@@ -62,7 +62,8 @@ class Compound:
     #: [DisplayUnits] Units of measure for IPython display
     display_units = DisplayUnits(T='K', P='Pa')
     
-    #: [dict] Units of measure for material properties (class attribute). 
+    #: [dict] Units of measure for material properties (class attribute).
+    # @note need units for LC metrics
     units = dict(MW='g/mol',
                  T='K',
                  P='Pa',

@@ -89,6 +89,7 @@ class Substance(Compound):
         self.Hvapm = 0
         
         # Set property values (defaults to Water property values)
+        # @note add lc properties - create external lookup or keep manual?
         self.MW = MW = select_value(obj, MW, 'MW', 1)
         self.CAS = select_value(obj, CAS, 'CAS', ID)
         self.Cp = select_value(obj, Cp, 'Cp', 4.18)
